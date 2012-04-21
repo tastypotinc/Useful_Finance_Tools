@@ -7,6 +7,7 @@ import time
 import datetime
 
 snpData = 'SNPData.csv'
+nasdaqData = 'NASDAQData.csv'
 
 class GoogleFinanceAPI:
   def __init__(self):
@@ -32,6 +33,18 @@ def findSNPPrice(boughtDate):
     dateFormatted = datetime.date(int(date[0]),int(date[1]),int(date[2]))
     if dateFormatted == boughtDate:
       return ar[4]
+    line = f.readline()  
+      
+def findNASDAQPrice(boughtDate):
+  f = open(nasdaqData,'r')
+  line = f.readline()
+  line = f.readline()
+  while line:
+    ar = line[0:-1].split(",")
+    date = ar[0].split("-")
+    dateFormatted = datetime.date(int(date[0]),int(date[1]),int(date[2]))
+    if dateFormatted == boughtDate:
+      return ar[4]
     line = f.readline()
 
 def sign(num):
@@ -44,7 +57,7 @@ if __name__ == "__main__":
   f = open('myStocks.csv','r')
 
   try:
-    open('SNPData.csv', 'r')
+    open(snpData, 'r')
   except IOError as e:
     webFile = urllib.urlopen("http://ichart.finance.yahoo.com/table.csv?s=^GSPC&c=2000")
     localFile = open(snpData, 'w')
@@ -52,8 +65,18 @@ if __name__ == "__main__":
     webFile.close()
     localFile.close()
 
+  try:
+    open(nasdaqData, 'r')
+  except IOError as e:
+    webFile = urllib.urlopen("http://ichart.finance.yahoo.com/table.csv?s=QQQ&c=2000")
+    localFile = open(nasdaqData, 'w')
+    localFile.write(webFile.read())
+    webFile.close()
+    localFile.close()
+
   snpPriceToday = c.get("^GSPC","")['l_cur'].replace(',','')
-  print "Ticker, Annualized Return, Percent More than Market, Normalized to Market and Time"
+  snpPriceToday = c.get("QQQ","NASDAQ")['l_cur']
+  #print "Ticker, Annualized Return, Percent More than Market, Normalized to Market and Time, Normalized to Market and Time2"
   line = f.readline()
   while line:
     s = line[0:-1].split(',')    #take out the \n
@@ -64,10 +87,18 @@ if __name__ == "__main__":
     currentInfo = c.get(s[0],"NASDAQ")
     buyPrice = s[3]
     currentPrice = currentInfo['l_cur']
-    annualizedReturn = ((float(currentPrice)/float(buyPrice))**(1./(numDays/365.))-1)*100
-    stockName = s[0]
     snpPriceOnBuyDate = findSNPPrice(boughtDate)
-    differenceBetweenMyStockAndMarket = float(currentPrice)/float(buyPrice) - float(snpPriceToday)/float(snpPriceOnBuyDate)
-    normalizedToMarketNormalizedToTime = sign(differenceBetweenMyStockAndMarket)*(abs(differenceBetweenMyStockAndMarket)**(1./(numDays/365.)))*100
-    print stockName,annualizedReturn, differenceBetweenMyStockAndMarket*100, normalizedToMarketNormalizedToTime
+    snpPriceOnBuyDate = findNASDAQPrice(boughtDate)
+    stockName = s[0]
+
+    annualizedReturn = ((float(currentPrice)/float(buyPrice))**(1./(numDays/365.))-1)*100   
+    annualizedReturnSNP = ((float(snpPriceToday)/float(snpPriceOnBuyDate))**(1./(numDays/365.))-1)*100    
+    differenceBetweenMyStockAndMarket = (float(currentPrice)/float(buyPrice) - float(snpPriceToday)/float(snpPriceOnBuyDate))*100
+
+    normalizedToMarketNormalizedToTime = (annualizedReturn - annualizedReturnSNP)
+    print stockName, normalizedToMarketNormalizedToTime
+    print
+
     line = f.readline()
+
+
