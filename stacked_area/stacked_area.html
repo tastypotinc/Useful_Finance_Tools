@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stacked Area Graph</title>    
+
+<link href="http://sencss.kilianvalkhof.com/minified/sen.full.min.css" rel="stylesheet" type="text/css">
+	    <style>
+	    #wrap {
+	      width:700px;
+	      padding:2em 2em 2em 172px;
+	      margin:0 auto;
+	    }
+	    #menu {
+	      width:150px;
+	      position:fixed;
+	      top:2em;
+	      margin-left:-172px;
+	    }
+	    h2 {display:block;background:#ccc;padding:0.5em}
+	    h3 {display:block;background:#eee;padding:0.5em}
+	    h3+*{clear:left;}
+
+	    pre {background:#eee;width:auto;padding:1em;overflow:hidden}
+	    .example {
+	      width:500px;
+	      height:170px;
+	    }
+	   .sparkexample {
+	      height:17px;
+	      display:inline-block;
+	      width:150px
+	    }
+	    </style>
+
+	
+    <script src="http://grafico.kilianvalkhof.com/dependencies/prototype.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://grafico.kilianvalkhof.com/dependencies/raphael.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://grafico.kilianvalkhof.com/source/grafico.base.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://grafico.kilianvalkhof.com/source/grafico.line.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://grafico.kilianvalkhof.com/source/grafico.bar.js" type="text/javascript" charset="utf-8"></script>
+    <script src="http://grafico.kilianvalkhof.com/source/grafico.spark.js" type="text/javascript" charset="utf-8"></script>
+  </head>
+  <body>
+	  <p style="clear:both"><strong>Stack graph with custom options:</strong></p>
+	  <div id="stackgraph2" class="example"></div>
+
+	  <script>
+	  Event.observe(window, 'load', function() {
+	    var stackgraph2 = new Grafico.StackGraph($('stackgraph2'),
+	      {
+	      workload:       [8, 10,  6, 1,  7, 6, 9],
+	      your_workload:  [6,  8,  4, 1, 12, 6, 2],
+	      his_workload:   [2,  9, 12, 2,  8, 9, 8]
+	      },
+	      {
+	        markers : "value",
+	        draw_axis: false,
+	        plot_padding : 0,
+	        hover_text_color: "#fff",
+	        background_color : "#fff",
+	        datalabels: {
+	          workload:       "My workload",
+	          your_workload:  "Your workload",
+	          his_workload:   "His workload"
+	        }
+	      });
+	  });
+	  </script>
+  </body>
+</html>
